@@ -16,6 +16,7 @@
 @interface Keychain : NSObject {
 }
 
++ (BOOL)deleteKey:(NSString *)key; //mitchcohen
 + (BOOL)setString:(NSString *)string forKey:(NSString *)key;
 + (NSString *)getStringForKey:(NSString *)key;
 
