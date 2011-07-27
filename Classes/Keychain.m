@@ -24,6 +24,38 @@
     return appName;
 }
 
++ (BOOL)deleteKey:(NSString *)key { //this written by MSC 2011-07-27
+	if (key == nil) {
+		return NO;
+	}
+    
+    key = [NSString stringWithFormat:@"%@ - %@", [Keychain appName], key];
+    
+	// First check if it already exists, by creating a search dictionary and requesting that 
+    // nothing be returned, and performing the search anyway.
+	NSMutableDictionary *existsQueryDictionary = [NSMutableDictionary dictionary];
+    
+	[existsQueryDictionary setObject:(id)kSecClassGenericPassword forKey:(id)kSecClass];
+    
+	// Add the keys to the search dict
+	[existsQueryDictionary setObject:@"service" forKey:(id)kSecAttrService];
+	[existsQueryDictionary setObject:key forKey:(id)kSecAttrAccount];
+    
+	OSStatus res = SecItemCopyMatching((CFDictionaryRef)existsQueryDictionary, NULL);
+	if (res == errSecItemNotFound) {
+        //don't need to do anything
+    } else if (res == errSecSuccess) {
+
+        res=SecItemDelete((CFDictionaryRef)existsQueryDictionary);
+		NSAssert1(res == errSecSuccess, @"SecItemUpdated returned %d!", res);
+        
+	} else {
+		NSAssert1(NO, @"Received %d from SecItemCopyMatching!", res);
+	}
+    
+	return YES;
+}
+
 + (BOOL)setString:(NSString *)string forKey:(NSString *)key {
 	if (string == nil || key == nil) {
 		return NO;
